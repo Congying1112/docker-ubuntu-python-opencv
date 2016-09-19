@@ -2,14 +2,8 @@ FROM congying/docker-ubuntu-python:u1404-p34
 
 MAINTAINER Congying <congying1112@gmail.com>
 
-RUN apt-get install -y unzip
-
-RUN cd /tmp && wget -O opencv.zip https://github.com/Itseez/opencv/archive/3.1.0.zip && unzip opencv.zip
-RUN cd /tmp && wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/3.1.0.zip && unzip opencv_contrib.zip
-
 RUN apt-get install -y \
 build-essential \
-cmake \
 libgtk2.0-dev \
 pkg-config \
 libavcodec-dev \
@@ -23,11 +17,21 @@ libavcodec-dev \
 libavformat-dev \
 libswscale-dev \
 libv4l-dev \
-libatlas-base-dev
+libatlas-base-dev \
+unzip
 
+RUN cd /tmp && wget -O cmake-3.6.2.tar.gz https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz && tar -zxvf cmake-3.6.2.tar.gz
+RUN cd /tmp/cmake-3.6.2 && ./bootstrap && make -j4 && make install
+RUN cmake --version
 
 RUN unlink /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python
 RUN pip install numpy
+
+RUN cd /tmp && wget -O opencv.zip https://github.com/Itseez/opencv/archive/3.1.0.zip && unzip opencv.zip
+RUN cd /tmp && wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/3.1.0.zip && unzip opencv_contrib.zip
+
+RUN mkdir /tmp/opencv-3.1.0/3rdparty/ippicv/downloads && mkdir /tmp/opencv-3.1.0/3rdparty/ippicv/downloads/linux-808b791a6eac9ed78d32a7666804320e
+RUN cd /tmp/opencv-3.1.0/3rdparty/ippicv/downloads/linux-808b791a6eac9ed78d32a7666804320e && wget https://raw.githubusercontent.com/Itseez/opencv_3rdparty/81a676001ca8075ada498583e4166079e5744668/ippicv/ippicv_linux_20151201.tgz
 
 RUN cd /tmp/opencv-3.1.0 \
 && mkdir build \
