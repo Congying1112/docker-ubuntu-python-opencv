@@ -1,11 +1,9 @@
-FROM congying/docker-ubuntu-python:u1404-p34
+FROM congying/ubuntu-dev:14.04
 
 MAINTAINER Congying <congying1112@gmail.com>
 
 RUN apt-get install -y \
-build-essential \
 libgtk2.0-dev \
-pkg-config \
 libavcodec-dev \
 libavformat-dev \
 libswscale-dev \
@@ -20,11 +18,10 @@ libv4l-dev \
 libatlas-base-dev \
 unzip
 
-RUN cd /tmp && wget -O cmake-3.6.2.tar.gz https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz && tar -zxvf cmake-3.6.2.tar.gz
-RUN cd /tmp/cmake-3.6.2 && ./bootstrap && make -j4 && make install
-RUN cmake --version
-
+RUN apt-get install -y python3-dev
 RUN unlink /usr/bin/python && ln -s /usr/bin/python3 /usr/bin/python
+
+RUN cd /tmp && wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py
 RUN pip install numpy
 
 RUN cd /tmp && wget -O opencv.zip https://github.com/Itseez/opencv/archive/3.1.0.zip && unzip opencv.zip
@@ -39,13 +36,13 @@ RUN cd /tmp/opencv-3.1.0 \
 && cmake -D CMAKE_BUILD_TYPE=RELEASE \
 -D CMAKE_INSTALL_PREFIX=/usr/local \
 -D INSTALL_C_EXAMPLES=OFF \
--D INSTALL_PYTHON_EXAMPLES=ON \
+-D INSTALL_PYTHON_EXAMPLES=OFF \
 -D OPENCV_EXTRA_MODULES_PATH=/tmp/opencv_contrib-3.1.0/modules \
--D BUILD_EXAMPLES=ON .. \
+-D ENABLE_PRECOMPILED_HEADERS=OFF \
+-D BUILD_EXAMPLES=OFF .. \
 && make -j4 \
 && make install \
 && ldconfig
-
 
 RUN cd /usr/local/lib/python3.4/dist-packages/ && ln -s cv2.cpython-34m.so cv2.so
 
