@@ -30,3 +30,5 @@ RUN cd /tmp/opencv-3.1.0 \
 && make -j4 \
 && make install \
 && ldconfig
+
+RUN rm -r /tmp/*
